@@ -14,10 +14,10 @@ class DashboardController extends Controller
     }
 
     /**
-    * Main HOMEPAGE.
-    *
-    * @return Response
-    */
+     * Main HOMEPAGE.
+     *
+     * @return Response
+     */
     public function index(Request $request)
     {
         if (Auth::check()) {
@@ -59,7 +59,6 @@ class DashboardController extends Controller
             ->with('other_actions', $other_actions)
             ->with('other_discussions', $other_discussions)
             ->with('activities', $activities);
-
         } else {
             return view('dashboard.presentation')
             ->with('tab', 'homepage');
@@ -76,12 +75,11 @@ class DashboardController extends Controller
     }
 
     /**
-    * Show all the files independant of groups.
-    */
+     * Show all the files independant of groups.
+     */
     public function files()
     {
-        if (Auth::check())
-        {
+        if (Auth::check()) {
             $groups = \App\Group::publicgroups()
             ->get()
             ->pluck('id')
@@ -91,16 +89,12 @@ class DashboardController extends Controller
             ->where('item_type', '<>', \App\File::FOLDER)
             ->whereIn('group_id', $groups)
             ->orderBy('created_at', 'desc')->paginate(25);
-        }
-
-        else
-        {
+        } else {
             $files = \App\File::with('group', 'user')
             ->where('item_type', '<>', \App\File::FOLDER)
             ->whereIn('group_id', \App\Group::publicgroups()->get()->pluck('id'))
             ->orderBy('updated_at', 'desc')->paginate(25);
         }
-
 
         return view('dashboard.files')
         ->with('tab', 'files')
@@ -108,12 +102,11 @@ class DashboardController extends Controller
     }
 
     /**
-    * Generates a list of unread discussions.
-    */
+     * Generates a list of unread discussions.
+     */
     public function discussions()
     {
-        if (Auth::check())
-        {
+        if (Auth::check()) {
             // All the groups of a user : Auth::user()->groups()->pluck('groups.id')
             // All the public groups : Auth::user()->groups()->pluck('groups.id')
 
@@ -170,29 +163,23 @@ class DashboardController extends Controller
 
     public function agendaJson(Request $request)
     {
-        if (Auth::check())
-        {
+        if (Auth::check()) {
             $groups = \App\Group::publicgroups()
             ->get()
             ->pluck('id')
             ->merge(Auth::user()->groups()->pluck('groups.id'));
-        }
-        else
-        {
+        } else {
             $groups = \App\Group::publicgroups()->get()->pluck('id');
         }
 
         // load of actions between start and stop provided by calendar js
-        if ($request->has('start') && $request->has('end'))
-        {
+        if ($request->has('start') && $request->has('end')) {
             $actions = \App\Action::with('group')
             ->where('start', '>', Carbon::parse($request->get('start')))
             ->where('stop', '<', Carbon::parse($request->get('end')))
             ->whereIn('group_id', $groups)
             ->orderBy('start', 'asc')->get();
-        }
-        else
-        {
+        } else {
             $actions = \App\Action::with('group')
             ->orderBy('start', 'asc')
             ->whereIn('group_id', $groups)
@@ -248,30 +235,25 @@ class DashboardController extends Controller
     }
 
     /**
-    * Renders a map of all users (curently).
-    */
+     * Renders a map of all users (curently).
+     */
     public function map()
     {
         $users = \App\User::where('latitude', '<>', 0)->get();
 
-        if (Auth::check())
-        {
+        if (Auth::check()) {
             $allowed_groups = \App\Group::publicgroups()
             ->get()
             ->pluck('id')
             ->merge(Auth::user()->groups()->pluck('groups.id'));
-        }
-        else
-        {
+        } else {
             $allowed_groups = \App\Group::publicgroups()->get()->pluck('id');
         }
-
 
         $actions = \App\Action::where('start', '>=', Carbon::now())
         ->where('latitude', '<>', 0)
         ->whereIn('group_id', $allowed_groups)
         ->get();
-
 
         $groups = \App\Group::where('latitude', '<>', 0)->get();
 

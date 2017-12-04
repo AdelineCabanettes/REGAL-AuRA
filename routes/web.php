@@ -98,8 +98,6 @@ Route::group(['middleware' => ['web']], function () {
     I will apply here the recomandtion "routes as documentation" from https://philsturgeon.uk/php/2013/07/23/beware-the-route-to-evil/
     */
 
-
-
     // application homepage, lists all groups on the server
     Route::get('groups', 'DashboardController@groups')->name('groups.index');
     Route::get('groups/create', 'GroupController@create')->name('groups.create');
@@ -118,7 +116,6 @@ Route::group(['middleware' => ['web']], function () {
     // General action create route
     Route::get('actions/create', 'ActionController@create')->name('actions.create');
     Route::post('actions/create', 'ActionController@store')->name('actions.store');
-
 
     // Groups : only members (or everyone if a group is public)
     Route::group(['middleware' => 'public', 'as' => 'groups', 'prefix' => 'groups/{group}'], function () {
@@ -142,7 +139,6 @@ Route::group(['middleware' => ['web']], function () {
         Route::post('preferences', 'MembershipController@update')->name('.membership.update');
         Route::get('leave', 'MembershipController@destroyConfirm')->name('.membership.deleteconfirm');
         Route::post('leave', 'MembershipController@destroy')->name('.membership.delete');
-
 
         // Stats
         Route::get('insights', 'InsightsController@forGroup')->name('.insights');
@@ -203,8 +199,6 @@ Route::group(['middleware' => ['web']], function () {
         Route::delete('actions/{action}/delete', 'ActionController@destroy')->name('.actions.delete');
         Route::get('actions/{action}/history', 'ActionController@history')->name('.actions.history');
 
-
-
         // Files
         Route::get('files', 'FileController@index')->name('.files.index');
         Route::get('files/create', 'FileController@create')->name('.files.create');
@@ -227,8 +221,6 @@ Route::group(['middleware' => ['web']], function () {
         // Maps
         Route::get('map', 'MapController@map')->name('.map');
         Route::get('map/embed', 'MapController@embed')->name('.map.embed');
-
-
     });
 
     // Users
@@ -244,10 +236,6 @@ Route::group(['middleware' => ['web']], function () {
 
     Route::get('users/{user}/contact', 'UserController@contactForm')->name('users.contactform');
     Route::post('users/{user}/contact', 'UserController@contact')->name('users.contact');
-
-
-
-
 
     // Search
     Route::get('search', 'SearchController@index');
@@ -279,6 +267,4 @@ Route::group(['middleware' => ['web']], function () {
         Route::resource('admin/user', 'Admin\UserController');
         Route::get('admin/insights', 'InsightsController@forAllGroups');
     });
-
-
 });
